@@ -1,55 +1,62 @@
+Option Explicit
+
+'-------------------------------------------------------------------------------------------------------
+'	With Op.Trans(1, Row)
+'		If .EntID <> 0 Then .MiscID(MiscGroupNo) =	GetParentParamValue(.Entity, "������ ����������")
+' End With
+'-------------------------------------------------------------------------------------------------------
+
+
+'-------------------------------------------------------------------------
+' ������� ������� ��������� �������� ���������
+'-------------------------------------------------------------------------
+Function GetParentParamValue(El, pmName)
+	GetParentParamValue = 0
+
+	If El Is Nothing Then Exit Function
+	If El.Parent Is Nothing Then Exit Function
+
+	If El.Params.Exists(pmName) Then
+		If El.Params(pmName).Value2 <> 0 Then
+			GetParentParamValue = El.Params(pmName).Value2
+			Exit Function
+		End If
+	End If
+
+	If Not El.Parent.Params.Exists(pmName) Then
+		GetParentParamValue = GetParentParamValue(El.Parent, pmName)
+	ElseIf El.Parent.Params(pmName).Value2 <> 0 Then
+		GetParentParamValue = El.Parent.Params(pmName).Value2
+	Else 
+		GetParentParamValue = GetParentParamValue(El.Parent, pmName)
+	End If
+
+End Function
+
+
 '---------------------------------------------------------------------------------------------------------
-' Функция используется, например, для вызова диалога, указанного в параметре одной из родительских папок
-' Функция возвращает ближайшее значение родительского параметра отличное от Val (0, '' и т.д.)
-' El - элемент, среди родителей которого ищем параметры
-' pmName - имя искомого параметра
-' Val - Value2 пустого параметра, для целого числа это 0, для строки ""
+' ������� ���������� ��������� �������� ������������� ��������� �������� �� Val (0, '' � �.�.)
 '---------------------------------------------------------------------------------------------------------
+Function GetParentParamValue2(El, pmName, Val)
+      GetParentParamValue2 = ""
 
-	' Пример использования
+     If El Is Nothing Then Exit Function
 
-'	Sub Workarea_OnProperties(Kind, KindID, ByRef Lock)
-'		Dim Dlg
-'	
-'
-'		With CreateLibObject("WinAPI")
-'			If .GetKeyState(16) Or .GetKeyState(17) Then Exit Sub
-'		End With
-'
-'		Select Case Kind
-'			Case acEntity
-'				Dim nValue : nValue = GetParentParamValue2(Workarea.Entity(Workarea.Site.ID), "Диалог свойств", 0)
-'	      	If nValue <> "" Then
-'	          Set dlg = App.CreateDialog(nValue)
-'	          Set dlg.Map.Item("Dep") = Workarea.Entity(Workarea.Site.ID)
-'	          dlg.DoModal
-'	          Lock = True
-'				Else
-'		  		   TreasurerOnProperties Kind, KindID, Lock : If Lock Then Exit Sub
-'		     End If
-'		End Select
-'	End Sub
+     If El.Parent Is Nothing Then Exit Function
 
-'---------------------------------------------------------------------------------------------------------
-
-Function GetParentParamValue(El, pmName, Val)
-
-     If El Is Nothing Then
-         GetParentParamValue = ""
-         Exit Function
-     End If
-
-     If El.Parent Is Nothing Then
-         GetParentParamValue = ""
-         Exit Function
-     End If
+		If El.Params.Exists(pmName) Then
+			If El.Params(pmName).Value2 <> Val Then
+				GetParentParamValue2 = El.Params(pmName).Value2
+				Exit Function
+			End If
+		End If
 
      If Not El.Parent.Params.Exists(pmName) Then
-         GetParentParamValue = GetParentParamValue(El.Parent, pmName, Val)
+         GetParentParamValue2 = GetParentParamValue2(El.Parent, pmName, Val)
      ElseIf El.Parent.Params(pmName).Value2 <> Val Then
-         GetParentParamValue = El.Parent.Params(pmName).Value2
+         GetParentParamValue2 = El.Parent.Params(pmName).Value2
      Else
-         GetParentParamValue = GetParentParamValue(El.Parent, pmName, Val)
+         GetParentParamValue2 = GetParentParamValue2(El.Parent, pmName, Val)
      End If
 
 End Function

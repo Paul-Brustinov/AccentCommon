@@ -1,0 +1,53 @@
+Dim CurRow : CurRow = 0
+Dim dctColor : Set dctColor = CreateObject("Scripting.Dictionary")
+
+
+
+'-----------------------------------------------
+'
+'-----------------------------------------------
+Sub SetColor(Row)
+Dim i
+
+	If sgrdEnts1.Rows < CurRow Then CurRow = sgrdEnts1.Rows
+
+	If CurRow <> 0 Then
+		For i = 1 To sgrdEnts1.Columns
+			sgrdEnts1.Cell(CurRow, i).SetBkColor dctColor(i)
+		Next
+	End If
+	CurRow = Row
+
+	If sgrdEnts1.Rows >= Row Then
+		For i = 1 To sgrdEnts1.Columns
+			sgrdEnts1.Cell(Row, i).SetBkColor RGB(141, 243, 252)
+		Next
+	End If
+End Sub
+
+'-----------------------------------------------
+'
+'-----------------------------------------------
+Sub sgrdEnts1_OnPosChanged
+	Call SetColor(sgrdEnts1.Row)
+End Sub
+
+'-----------------------------------------------
+'
+'-----------------------------------------------
+Sub SaveColor()
+	Dim i
+	For i = 1 To sgrdEnts1.Columns
+		dctColor.Add i, sgrdEnts1.Column(i).BackColor
+	Next
+End Sub
+
+'-----------------------------------------------
+'
+'-----------------------------------------------
+Sub Form_OnLoad
+	Call SaveColor()
+	Call SaveColor6()
+End Sub
+
+
